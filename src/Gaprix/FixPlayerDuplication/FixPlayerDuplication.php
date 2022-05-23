@@ -8,6 +8,7 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\plugin\PluginBase;
+use pocketmine\utils\UUID;
 
 class FixPlayerDuplication extends PluginBase implements Listener
 {
@@ -25,10 +26,10 @@ class FixPlayerDuplication extends PluginBase implements Listener
 		$player = $event->getPlayer();
 		if($packet instanceof LoginPacket) {
 			foreach($this->onlinePlayers as $existingPlayer) {
-				if(strcasecmp($existingPlayer->getName(), $packet->username) === 0 || $existingPlayer->getUniqueId()->equals($packet->clientUUID)) {
+				if(strcasecmp($existingPlayer->getName(), $packet->username) === 0 || $existingPlayer->getUniqueId()->equals(UUID::fromString($packet->clientUUID))) {
 					$ev = new PlayerDuplicateLoginEvent($player, $existingPlayer);
 					$this->getServer()->getPluginManager()->callEvent($ev);
-					if($ev->isCancelled()){
+					if($ev->isCancelled()) {
 						$player->kick($ev->getDisconnectMessage());
 						return;
 					}
