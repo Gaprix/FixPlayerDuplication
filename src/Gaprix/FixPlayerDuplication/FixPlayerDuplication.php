@@ -26,7 +26,7 @@ class FixPlayerDuplication extends PluginBase implements Listener
 		$player = $event->getPlayer();
 		if($packet instanceof LoginPacket) {
 			foreach($this->onlinePlayers as $existingPlayer) {
-				if(strcasecmp($existingPlayer->getName(), $packet->username) === 0 || $existingPlayer->getUniqueId()->equals(UUID::fromString($packet->clientUUID))) {
+				if(strcasecmp($existingPlayer->getName(), $packet->username) === 0 || ($existingPlayer->getUniqueId() != null && $existingPlayer->getUniqueId()->equals(UUID::fromString($packet->clientUUID)))) {
 					$ev = new PlayerDuplicateLoginEvent($player, $existingPlayer);
 					$this->getServer()->getPluginManager()->callEvent($ev);
 					if($ev->isCancelled()) {
